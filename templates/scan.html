@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <h1>Verify Product Authenticity</h1>
+
+    <p><strong>Product ID:</strong> {{ pid }}</p>
+    <p><strong>Batch:</strong> {{ batch }}</p>
+
+    <form action="/verify" method="POST" enctype="multipart/form-data">
+        <!-- Product data passed to backend -->
+        <input type="hidden" name="pid" value="{{ pid }}">
+        <input type="hidden" name="batch" value="{{ batch }}">
+
+        <!-- GPS fields (auto-filled) -->
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lng" name="lng">
+        <input type="hidden" id="accuracy" name="accuracy">
+
+        <p><strong>Upload the QR image for full verification:</strong></p>
+        <input type="file" name="qr_image" accept="image/*" required>
+
+        <br><br>
+        <button type="submit">Verify Now</button>
+    </form>
+
+    <script>
+        // Request GPS location with high accuracy
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                document.getElementById("lat").value = pos.coords.latitude;
+                document.getElementById("lng").value = pos.coords.longitude;
+                document.getElementById("accuracy").value = pos.coords.accuracy;  // FIXED
+            },
+            (err) => {
+                console.error("GPS Error: ", err);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    </script>
+
+</body>
+</html>
